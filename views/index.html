@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>七牛图片上传</title>
+</head>
+<body>
+  <form id="formData" enctype="multipart/form-data">
+    <input type="file" onchange="handleClick()" name="file" multiple>
+  </form>
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+  <script>
+    var token, key;
+    var handleClick = function () {
+      console.log(token)
+      if (!token) {
+        setTimeout(function () {
+          handleClick();
+        }, 300)
+      }
+      var formData = new FormData($('#formData')[0]);
+      formData.append('token', token);
+      formData.append('key', 456);
+      $.ajax({
+        url: 'http://upload.qiniu.com',
+        type: 'POST',
+        cache: false,
+        processData: false,
+        contentType: false,
+        data: formData
+      }).done(function (response) {
+        console.log(response)
+      }).fail(function (error) {
+        console.log(error)
+      })
+    }
+
+    $.get('/token').done(function (response) {
+      token = response.data.token;
+      key = response.data.key;
+    })
+
+  </script>
+</body>
+</html>

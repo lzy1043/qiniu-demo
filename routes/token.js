@@ -10,19 +10,18 @@ const mac = new qiniu.auth.digest.Mac(config.AK, config.SK);
 
 /*换取七牛云token*/
 router.get('/', (req, res, next) => {
-  const key = 'pic_' + new Date().getTime();
   const options = {
-    scope: 'blog',
-    returnBody: '{"key": "$(key)","hash": "${etag}"}',
-    persistentOps: 'imageMogr2/format/webp|saveas/' + new Buffer('lzy1043:' + 123).toString('base64')
+    scope: 'lzy1043',
+    returnBody: '{"key": "${fname}","hash": "${etag}"}',
+    persistentOps: 'imageMogr2/format/webp|saveas/' + new Buffer('blog:${fname}').toString('base64'),
+    savekey: "${fname}"
   }
   const putPolicy = new qiniu.rs.PutPolicy(options);
   const uploadToken=putPolicy.uploadToken(mac);
   res.json({
     code: 0,
     data: {
-      token: uploadToken,
-      key
+      token: uploadToken
     }
   })
 })

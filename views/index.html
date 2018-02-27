@@ -6,21 +6,15 @@
 </head>
 <body>
   <form id="formData" enctype="multipart/form-data">
-    <input type="file" onchange="handleClick()" name="file" multiple>
+    <input id="file" type="file" onchange="handleClick()" name="file" multiple>
   </form>
   <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
   <script>
     var token, key;
-    var handleClick = function () {
-      console.log(token)
-      if (!token) {
-        setTimeout(function () {
-          handleClick();
-        }, 300)
-      }
-      var formData = new FormData($('#formData')[0]);
-      formData.append('token', token);
-      formData.append('key', 456);
+    var upload = function (data) {
+      var formData = new FormData();
+      formData.append('file', data)
+      formData.append('token', token)
       $.ajax({
         url: 'http://upload.qiniu.com',
         type: 'POST',
@@ -33,6 +27,18 @@
       }).fail(function (error) {
         console.log(error)
       })
+    }
+    var handleClick = function () {
+      if (!token) {
+        setTimeout(function () {
+          handleClick();
+        }, 300)
+      } else {
+        var files = $('#file')[0].files;
+        $.each(files, function (index, file) {
+          upload(file)
+        })
+      }
     }
 
     $.get('/token').done(function (response) {
